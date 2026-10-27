@@ -1,10 +1,10 @@
 # Análisis de la Tasa de Cambio (TRM) en Tiempo Real con Apache Kafka y Spark Streaming
 
-**Curso:** Big Data[cite: 9]  
-**Universidad:** Universidad Nacional Abierta y a Distancia (UNAD)[cite: 9]  
+**Curso:** Big Data 
+**Universidad:** Universidad Nacional Abierta y a Distancia (UNAD)
 **Actividad:** Proyecto Final - Procesamiento Batch y en Tiempo Real
 
-##Definición del Problema y Conjunto de Datos
+## Definición del Problema y Conjunto de Datos
 
 * Conjunto de Datos: Tasa de Cambio Representativa del Mercado (TRM) Histórico, obtenido del portal oficial de Datos Abiertos de Colombia (datos.gov.co) y suministrado por la Superintendencia Financiera de Colombia.   
 
@@ -16,7 +16,7 @@
 ### El entorno de trabajo opera sobre una máquina virtual con Ubuntu Linux (vboxuser).   
 
 ## 1. Instalación del cliente de Python para Kafka
-### pip install kafka-python
+pip install kafka-python
 
 ## 2. Descarga y configuración de Apache Kafka (v3.6.2)
 wget [https://downloads.apache.org/kafka/3.6.2/kafka_2.13-3.6.2.tgz](https://downloads.apache.org/kafka/3.6.2/kafka_2.13-3.6.2.tgz)
@@ -47,4 +47,4 @@ python3 kafka_producer.py
 spark-submit --packages org.apache.spark:spark-sql-kafka-0-10_2.12:3.5.3 spark_streaming_c
 
 ## Monitoreo y Resultados
-### Las evidencias fotográficas de la ejecución del productor, las tablas de resultados por lotes (Batches) y el análisis de rendimiento en la interfaz web de Spark UI (puerto 4040) se encuentran guardadas en la carpeta evidencias/.
+Las evidencias fotográficas de la ejecución del productor, las tablas de resultados por lotes (Batches) y el análisis de rendimiento en la interfaz web de Spark UI (puerto 4040) se encuentran guardadas en la carpeta evidencias/.
