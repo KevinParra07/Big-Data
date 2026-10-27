@@ -1,22 +1,50 @@
-# Análisis de Datos en Tiempo Real con Apache Kafka y Spark Streaming
+# Análisis de la Tasa de Cambio (TRM) en Tiempo Real con Apache Kafka y Spark Streaming
 
-### El desarrollo e implementación del pipeline de datos en tiempo real se estructuró bajo una arquitectura desacoplada de productor-consumidor, garantizando la ingesta, transporte y procesamiento concurrente de eventos generados por dispositivos IoT simulados.
+**Curso:** Big Data[cite: 9]  
+**Universidad:** Universidad Nacional Abierta y a Distancia (UNAD)[cite: 9]  
+**Actividad:** Proyecto Final - Procesamiento Batch y en Tiempo Real
 
-###  Aprovisionamiento y Despliegue del Entorno:
-* El sistema opera sobre un entorno virtualizado basado en Ubuntu Linux (vboxuser). Para el almacenamiento y distribución de mensajes en streaming, se configuró e instaló Apache Kafka (versión 3.6.2) en conjunto con su gestor de coordinación ZooKeeper.
+##Definición del Problema y Conjunto de Datos
 
-* Se estableció un canal de comunicación centralizado mediante la creación de un tópico específico denominado sensor_data, configurado con una partición y un factor de replicación unitario para asegurar el direccionamiento de los eventos.
+* Conjunto de Datos: Tasa de Cambio Representativa del Mercado (TRM) Histórico, obtenido del portal oficial de Datos Abiertos de Colombia (datos.gov.co) y suministrado por la Superintendencia Financiera de Colombia.   
 
-### Simulación y Emisión de Flujos (Productor):
-* Mediante la ejecución del script en Python kafka_producer.py, se emula de forma periódica una red de sensores distribuidos.   
+* Objetivo Batch: Cargar, limpiar y realizar análisis exploratorio (EDA) de los registros históricos del dólar en Colombia para identificar tendencias y valores máximos o mínimos.
+* Objetivo Streaming: Simular el flujo de cotizaciones del dólar en tiempo real mediante un generador y procesarlas con Spark Structured Streaming para calcular promedios móviles instantáneos.
 
-* Dicho script genera estructuras de datos en formato JSON que integran un identificador único de sensor (sensor_id), métricas estocásticas de temperatura y humedad, y una marca temporal (timestamp), transmitiendo los registros de forma continua hacia el broker de Kafka.
+## ⚙️ Prerrequisitos e Instalación 
 
-### Procesamiento Distribuido y Ventanas Temporales (Consumidor):
-* La lectura y análisis del flujo se realiza a través de un consumidor desarrollado en PySpark (spark_streaming_consumer.py), haciendo uso del conector de SQL para Kafka (spark-sql-kafka).   
+### El entorno de trabajo opera sobre una máquina virtual con Ubuntu Linux (vboxuser).   
 
-* El motor de procesamiento deserializa los mensajes binarios y aplica un esquema tipado estricto. Asimismo, implementa una agregación basada en ventanas de tiempo deslizantes de 1 minuto (window), lo que permite calcular de manera dinámica el promedio de temperatura y humedad por cada sensor, arrojando los resultados consolidados por lotes directamente en la terminal de ejecución.
+## 1. Instalación del cliente de Python para Kafka
+### pip install kafka-python
 
-### Validación y Monitoreo del Rendimiento:
+## 2. Descarga y configuración de Apache Kafka (v3.6.2)
+wget [https://downloads.apache.org/kafka/3.6.2/kafka_2.13-3.6.2.tgz](https://downloads.apache.org/kafka/3.6.2/kafka_2.13-3.6.2.tgz)
+tar -xzf kafka_2.13-3.6.2.tgz
+sudo mv kafka_2.13-3.6.2 /opt/Kafka
 
-* El comportamiento operativo y la estabilidad del clúster de procesamiento se auditaron en tiempo de ejecución a través de la interfaz web de diagnóstico de Spark (puerto 4040). Esto permitió certificar la correcta distribución de las tareas entre los ejecutores y la ejecución eficiente de las etapas del flujo de streaming sin saturación de memoria.
+## Guía de Ejecución Paso a Paso
+## Paso 1: Iniciar los Servicios (ZooKeeper y Servidor Kafka)
+### Ejecutar en la consola de PuTTY:
+
+### Iniciar ZooKeeper en segundo plano
+sudo /opt/Kafka/bin/zookeeper-server-start.sh /opt/Kafka/config/zookeeper.properties &
+
+### Iniciar el servidor de Apache Kafka en segundo plano
+sudo /opt/Kafka/bin/kafka-server-start.sh /opt/Kafka/config/server.properties &
+
+### (Presiona Enter cuando finalice la carga de los logs en la terminal para que aparezca el prompt).
+
+## Paso 2: Crear el Tópico en Kafka
+
+/opt/Kafka/bin/kafka-topics.sh --create --bootstrap-server localhost:9092 --replication-factor 1 --partitions 1 --topic trm_stream
+
+## Paso 3: Iniciar el Productor de Datos 
+python3 kafka_producer.py
+
+## Paso 4: Iniciar el Consumidor de Spark Streaming (Terminal 2)
+### Abre una nueva ventana en PuTTY y ejecuta el comando de procesamiento distribuido:   
+spark-submit --packages org.apache.spark:spark-sql-kafka-0-10_2.12:3.5.3 spark_streaming_c
+
+## Monitoreo y Resultados
+### Las evidencias fotográficas de la ejecución del productor, las tablas de resultados por lotes (Batches) y el análisis de rendimiento en la interfaz web de Spark UI (puerto 4040) se encuentran guardadas en la carpeta evidencias/.
