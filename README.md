@@ -12,7 +12,7 @@
 
 * Dicho script genera estructuras de datos en formato JSON que integran un identificador único de sensor (sensor_id), métricas estocásticas de temperatura y humedad, y una marca temporal (timestamp), transmitiendo los registros de forma continua hacia el broker de Kafka.
 
-###Procesamiento Distribuido y Ventanas Temporales (Consumidor):
+### Procesamiento Distribuido y Ventanas Temporales (Consumidor):
 * La lectura y análisis del flujo se realiza a través de un consumidor desarrollado en PySpark (spark_streaming_consumer.py), haciendo uso del conector de SQL para Kafka (spark-sql-kafka).   
 
 * El motor de procesamiento deserializa los mensajes binarios y aplica un esquema tipado estricto. Asimismo, implementa una agregación basada en ventanas de tiempo deslizantes de 1 minuto (window), lo que permite calcular de manera dinámica el promedio de temperatura y humedad por cada sensor, arrojando los resultados consolidados por lotes directamente en la terminal de ejecución.
