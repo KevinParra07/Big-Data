@@ -3,21 +3,19 @@ import json
 import random
 from kafka import KafkaProducer
 
-def generar_trm_en_vivo():
+def generate_sensor_data():
     return {
-        "id_registro": random.randint(100, 999),
-        "trm_valor": round(random.uniform(4000.0, 4500.0), 2),
-        "moneda": "USD/COP",
-        "marca_de_tiempo": int(time.time())
+        "sensor_id": random.randint(1, 10),
+        "temperature": round(random.uniform(20, 30), 2),
+        "humidity": round(random.uniform(30, 70), 2),
+        "timestamp": int(time.time())
     }
 
-productor = KafkaProducer(
-    bootstrap_servers=['localhost:9092'],
-    value_serializer=lambda v: json.dumps(v).encode('utf-8')
-)
+producer = KafkaProducer(bootstrap_servers=['localhost:9092'],
+                         value_serializer=lambda x: json.dumps(x).encode('utf-8'))
 
 while True:
-    datos_trm = generar_trm_en_vivo()
-    productor.send('trm_stream', value=datos_trm)
-    print(f"Enviado TRM: {datos_trm}")
+    sensor_data = generate_sensor_data()
+    producer.send('sensor_data', value=sensor_data)
+    print(f"Sent: {sensor_data}")
     time.sleep(1)
