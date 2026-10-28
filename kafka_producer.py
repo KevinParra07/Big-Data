@@ -8,12 +8,12 @@ def generar_trm_en_vivo():
         "id_registro": random.randint(100, 999),
         "trm_valor": round(random.uniform(4000.0, 4500.0), 2),
         "moneda": "USD/COP",
-        "timestamp": int(time.time())
+        "marca_de_tiempo": int(time.time())
     }
 
 productor = KafkaProducer(
     bootstrap_servers=['localhost:9092'],
-    value_serializer=lambda x: json.dumps(x).encode('utf-8')
+    value_serializer=lambda v: json.dumps(v).encode('utf-8')
 )
 
 while True:
