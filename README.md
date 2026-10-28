@@ -1,50 +1,32 @@
-# Análisis de la Tasa de Cambio (TRM) en Tiempo Real con Apache Kafka y Spark Streaming
+# Proyecto Big Data - Análisis y Procesamiento de la TRM (Tasa de Cambio)
 
-**Curso:** Big Data 
-**Universidad:** Universidad Nacional Abierta y a Distancia (UNAD)
-**Actividad:** Proyecto Final - Procesamiento Batch y en Tiempo Real
+Repositorio oficial para la entrega de la Tarea 3 del curso de Big Data de la UNAD. Este proyecto implementa un pipeline completo de procesamiento de datos utilizando tecnologías de Big Data sobre un entorno distribuido en máquina virtual (Ubuntu/Hadoop).
 
-## Definición del Problema y Conjunto de Datos
+---
 
-* Conjunto de Datos: Tasa de Cambio Representativa del Mercado (TRM) Histórico, obtenido del portal oficial de Datos Abiertos de Colombia (datos.gov.co) y suministrado por la Superintendencia Financiera de Colombia.   
+## 📋 1. Descripción del Proyecto
+El proyecto tiene como objetivo principal procesar y analizar el comportamiento histórico y en tiempo real de la **Tasa de Cambio Representativa del Mercado (TRM)** en Colombia. Para cumplir con los requisitos académicos, la solución se divide en dos enfoques:
+1. **Procesamiento Batch (Lotes):** Carga, limpieza, transformación y Análisis Exploratorio de Datos (EDA) sobre el dataset histórico almacenado en Hadoop (HDFS).
+2. **Procesamiento en Tiempo Real (Streaming):** Simulación de flujos de datos continuos mediante Apache Kafka y consumo en micro-lotes con PySpark Structured Streaming.
 
-* Objetivo Batch: Cargar, limpiar y realizar análisis exploratorio (EDA) de los registros históricos del dólar en Colombia para identificar tendencias y valores máximos o mínimos.
-* Objetivo Streaming: Simular el flujo de cotizaciones del dólar en tiempo real mediante un generador y procesarlas con Spark Structured Streaming para calcular promedios móviles instantáneos.
+---
 
-## ⚙️ Prerrequisitos e Instalación 
+## 🛠️ 2. Arquitectura e Infraestructura Tecnológica
+* **Sistema Operativo:** Ubuntu (VM / Entorno Virtualizado - `vboxuser`)
+* **Almacenamiento Distribuido:** Hadoop HDFS
+* **Procesamiento por Lotes (Batch) y Streaming:** Apache Spark (PySpark)
+* **Mensajería en Tiempo Real:** Apache Kafka y ZooKeeper
+* **Lenguaje de Programación:** Python 3
 
-### El entorno de trabajo opera sobre una máquina virtual con Ubuntu Linux (vboxuser).   
+---
 
-## 1. Instalación del cliente de Python para Kafka
-pip install kafka-python
-
-## 2. Descarga y configuración de Apache Kafka (v3.6.2)
-wget [https://downloads.apache.org/kafka/3.6.2/kafka_2.13-3.6.2.tgz](https://downloads.apache.org/kafka/3.6.2/kafka_2.13-3.6.2.tgz)
-tar -xzf kafka_2.13-3.6.2.tgz
-sudo mv kafka_2.13-3.6.2 /opt/Kafka
-
-## Guía de Ejecución Paso a Paso
-## Paso 1: Iniciar los Servicios (ZooKeeper y Servidor Kafka)
-### Ejecutar en la consola de PuTTY:
-
-### Iniciar ZooKeeper en segundo plano
-sudo /opt/Kafka/bin/zookeeper-server-start.sh /opt/Kafka/config/zookeeper.properties &
-
-### Iniciar el servidor de Apache Kafka en segundo plano
-sudo /opt/Kafka/bin/kafka-server-start.sh /opt/Kafka/config/server.properties &
-
-### (Presiona Enter cuando finalice la carga de los logs en la terminal para que aparezca el prompt).
-
-## Paso 2: Crear el Tópico en Kafka
-
-/opt/Kafka/bin/kafka-topics.sh --create --bootstrap-server localhost:9092 --replication-factor 1 --partitions 1 --topic trm_stream
-
-## Paso 3: Iniciar el Productor de Datos 
-python3 kafka_producer.py
-
-## Paso 4: Iniciar el Consumidor de Spark Streaming (Terminal 2)
-### Abre una nueva ventana en PuTTY y ejecuta el comando de procesamiento distribuido:   
-spark-submit --packages org.apache.spark:spark-sql-kafka-0-10_2.12:3.5.3 spark_streaming_c
-
+## 📂 3. Estructura del Repositorio
+```text
+/
+├── Tasa_de_Cambio.csv              # Dataset histórico oficial (fuente original)
+├── procesamiento_batch.py          # Script de PySpark para limpieza, transformación y EDA (Batch)
+├── kafka_producer.py               # Productor de Kafka para la simulación del flujo de datos
+├── spark_streaming_consumer.py     # Consumidor de PySpark Structured Streaming (Tiempo Real)
+└── README.md                       # Documentación oficial del proyecto
 ## Monitoreo y Resultados
 Las evidencias fotográficas de la ejecución del productor, las tablas de resultados por lotes (Batches) y el análisis de rendimiento en la interfaz web de Spark UI (puerto 4040) se encuentran guardadas en la carpeta evidencias/.
