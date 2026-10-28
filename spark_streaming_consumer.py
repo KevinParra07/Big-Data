@@ -1,37 +1,43 @@
 from pyspark.sql import SparkSession
-from pyspark.sql.functions import from_json, col
-from pyspark.sql.types import StructType, StructField, IntegerType, FloatType, StringType, LongType
+from pyspark.sql.functions import from_json, col, window
+from pyspark.sql.types import StructType, StructField, IntegerType, FloatType, TimestampType
+import logging
 
-# Configurar sesión de Spark para Streaming
+# Configura el nivel de log a WARN para reducir los mensajes INFO
 spark = SparkSession.builder \
-    .appName("TRMStreamingAnalysis") \
+    .appName("KafkaSparkStreaming") \
     .getOrCreate()
 
 spark.sparkContext.setLogLevel("WARN")
 
-# Definir el esquema de los datos de la TRM en tiempo real
-esquema_trm = StructType([
-    StructField("id_registro", IntegerType()),
-    StructField("trm_valor", FloatType()),
-    StructField("moneda", StringType()),
-    StructField("marca_de_tiempo", LongType())
+# Definir el esquema de los datos de entrada
+schema = StructType([
+    StructField("sensor_id", IntegerType()),
+    StructField("temperature", FloatType()),
+    StructField("humidity", FloatType()),
+    StructField("timestamp", TimestampType())
 ])
 
+# Crear una sesión de Spark
+spark = SparkSession.builder \
+    .appName("SensorDataAnalysis") \
+    .getOrCreate()
+
 # Configurar el lector de streaming para leer desde Kafka
-df_kafka = spark \
+df = spark \
     .readStream \
     .format("kafka") \
     .option("kafka.bootstrap.servers", "localhost:9092") \
-    .option("subscribe", "trm_stream") \
+    .option("subscribe", "sensor_data") \
     .load()
 
-# Parsear el valor JSON recibido de Kafka
-df_json = df_kafka.selectExpr("CAST(value AS STRING) as json_data") \
-    .select(from_json(col("json_data"), esquema_trm).alias("data")) \
+# Parsear los datos JSON recibidos
+df_parsed = df.selectExpr("CAST(string AS STRING)") \
+    .select(from_json(col("string"), schema).alias("data")) \
     .select("data.*")
 
-# Mostrar el resultado del streaming en la consola
-query = df_json.writeStream \
+# Escribir la salida en la consola en tiempo real
+query = df_parsed.writeStream \
     .outputMode("append") \
     .format("console") \
     .start()
